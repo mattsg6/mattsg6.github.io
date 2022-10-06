@@ -17,7 +17,7 @@ html, body {
 .full-container {
   display:grid;
   grid-template-columns: 100%;
-  grid-template-rows: 29vh 61vh 10vh;
+  grid-template-rows: 32vh 58vh 10vh;
 }
 
 .header-container, .footer-container {
