@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, intial-scale-1, shrink-to-fit=no"
+    />
+    <title>COMP 475 Portfolio</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="full-container">
+      <div class="header-container">
+        <h1 class="header-text">Comp 475: 2D Computer Graphics</h1>
+        <h3 class="header-text">Fall 2022</h3>
+        <div class="nav-bar">
+          <a href="./index.html">Home</a>
+          <a href="./rectangles.html">Rectangles</a>
+          <a href="./polygons.html">Polygons</a>
+        </div>
+      </div>
+      <div class="content-container">
+        <div class="home-text">
+          <h2>Welcome to the COMP 475 Portfolio</h2>
+          <p>Navigate the menu to see what the COMP 475 students accomplished and created in the 
+            Fall 2022 semester.
+          </p>
+        </div>
+      </div>
+      <div class="footer-container">
+        <h5>designed by a COMP 475 student</h5>
+      </div>
+    </div>
+
+    <script>
+      let slideIndex = 1;
+      showSlides(slideIndex);
+
+      // Next/previous controls
+      function plusSlides(n) {
+        showSlides((slideIndex += n));
+      }
+
+      // Thumbnail image controls
+      function currentSlide(n) {
+        showSlides((slideIndex = n));
+      }
+
+      function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        if (n > slides.length) {
+          slideIndex = 1;
+        }
+        if (n < 1) {
+          slideIndex = slides.length;
+        }
+        for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+        slides[slideIndex - 1].style.display = "block";
+      }
+    </script>
+  </body>
+</html>
