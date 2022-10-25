@@ -17,7 +17,7 @@ html, body {
 .full-container {
   display:grid;
   grid-template-columns: 100%;
-  grid-template-rows: 29vh 61vh 10vh;
+  grid-template-rows: 185px 500px 75px;
 }
 
 .header-container, .footer-container {
@@ -104,7 +104,7 @@ a:hover {
 
 .slideshow-container {
   position: relative;
-  width: 50vh;
+  width: 350px;
 }
 
 /* Hide the images by default */
@@ -206,5 +206,9 @@ img {
 
   .content-text {
     text-align: center;
+  }
+
+  a {
+    margin: 1.5rem;
   }
 }
