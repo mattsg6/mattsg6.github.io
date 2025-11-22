@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-row class="w-100 d-flex justify-center pb-5 pt-10 ma-0">
-            <span class="text-h3">Matthew Gilmore</span>
+            <span class="text-h3" style="text-align: center;">Matthew Gilmore</span>
         </v-row>
         <v-row class="w-100 d-flex justify-center ga-6 flex-wrap ma-0">
             <template v-for="item in menu">
