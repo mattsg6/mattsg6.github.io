@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container fluid class="pa-0 ma-0 h-100">
         <v-row class="w-100 d-flex justify-center pb-5 pt-10 ma-0">
             <span class="text-h3" style="text-align: center;">Matthew Gilmore</span>
         </v-row>
@@ -7,6 +7,9 @@
             <template v-for="item in menu">
                 <a target="_blank" :href="item.src">{{ item.name }}</a>
             </template>
+        </v-row>
+        <v-row class="pa-0 ma-0 w-100 h-100">
+            <scene></scene>
         </v-row>
     </v-container>
 </template>
