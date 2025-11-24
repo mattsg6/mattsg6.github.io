@@ -8,7 +8,6 @@ onMounted(() => {
   const canvas = document.querySelector("#c");
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor(0xffffff, 1);
-  renderer.setPixelRatio(window.devicePixelRatio);
 
   let width = canvas.clientWidth;
   let height = canvas.clientHeight;
