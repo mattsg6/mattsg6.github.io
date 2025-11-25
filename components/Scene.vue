@@ -15,8 +15,7 @@ onMounted(() => {
   let height = canvas.clientHeight;
 
   const startPosition = -20; // -20
-  const groundLevel = 0;
-  const torsoHeight = 160;
+  const torsoHeight = 155;
   const walkSpeed = 0.75 / pixelRatio;
   let time = 0;
 
@@ -29,45 +28,75 @@ onMounted(() => {
   const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
   // Sun
-  const sunGeometry = new THREE.TorusGeometry(60, 1, 16, 100); // radius, thickness
+  const sunPosition = {
+    x: 200,
+    y: height - 150,
+    radius: 60
+  }
+  const sunGeometry = new THREE.TorusGeometry(sunPosition.radius, 1, 16, 100); // radius, thickness
   const sun = new THREE.Mesh(sunGeometry, material);
-  sun.position.set(200, height - 150, 0);
+  
+  sun.position.set(sunPosition.x, sunPosition.y, 0);
   scene.add(sun);
+  // Sun rays
+  const sunRayDist = 6;
+  const sunRayLength = 50;
+  const rays = {
+    one: limbFactory(1, sunRayLength,sunPosition.x, sunPosition.y + sunPosition.radius + sunRayDist, 0),
+    two: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
+    three: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
+    four: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
+    five: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
+    six: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
+  }
 
   // Man
   // Torso
-  const torsoGeometry = new THREE.CylinderGeometry(1, 1, torsoHeight - 84);
-  const torso = new THREE.Mesh(torsoGeometry, material);
-  torso.position.set(startPosition, torsoHeight / 2 + 42, 0);
+  const torso = limbFactory(1, torsoHeight / 2, startPosition, torsoHeight, 0);
   scene.add(torso);
   // head
   const headGeometry = new THREE.TorusGeometry(20, 1, 16, 100);
   const head = new THREE.Mesh(headGeometry, material);
-  head.position.set(startPosition, groundLevel + torsoHeight + 20, 0);
+  head.position.set(startPosition, torsoHeight + 20, 0);
   scene.add(head);
   // arms
-  const armLength = torsoHeight / 4;
-  const armGeo = new THREE.CylinderGeometry(1, 1, armLength);
-  armGeo.translate(0, -armLength / 2, 0);
-  const armLPivot = new THREE.Object3D();
-  armLPivot.position.set(startPosition, torsoHeight - (torsoHeight/7), 0);
-  scene.add(armLPivot);
-  const armLMesh = new THREE.Mesh(
-    armGeo,
-    material
-  );
-  armLPivot.add(armLMesh);
-  armLPivot.rotation.z = -Math.PI / 4;
-  const armRPivot = new THREE.Object3D();
-  armRPivot.position.set(startPosition, torsoHeight - (torsoHeight/7), 0);
-  scene.add(armRPivot);
-  const armRMesh = new THREE.Mesh(
-    armGeo,
-    material
-  );
-  armRPivot.add(armRMesh);
-  armRPivot.rotation.z = Math.PI / 4;
+  const armLength = torsoHeight / 3;
+  const armY = torsoHeight - torsoHeight / 5;
+  const armL = limbFactory(1, armLength, startPosition, armY, 0);
+  armL.rotation.z = -Math.PI / 4;
+  const armR = limbFactory(1, armLength, startPosition, armY, 0);
+  armR.rotation.z = Math.PI / 4;
   // legs
+  const legLength = torsoHeight / 4;
+  const legLTop = limbFactory(1, legLength, startPosition, torsoHeight / 2, 0);
+  const legLBot = limbFactory(1, legLength, 0, -legLength, 0, false);
+  legLTop.add(legLBot);
+  const legRTop = limbFactory(1, legLength, startPosition, torsoHeight / 2, 0);
+  const legRBot = limbFactory(1, legLength, 0, -legLength, 0);
+  legRTop.add(legRBot);
+
+  function limbFactory(
+    thickness,
+    length,
+    startX,
+    startY,
+    startZ,
+    addToScene = true
+  ) {
+    const geometry = new THREE.CylinderGeometry(thickness, thickness, length);
+    geometry.translate(0, -length / 2, 0);
+    const obj = new THREE.Object3D();
+    obj.position.set(startX, startY, startZ);
+    if (addToScene) {
+      scene.add(obj);
+    }
+    const mesh = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({ color: 0x000000 })
+    );
+    obj.add(mesh);
+    return obj;
+  }
 
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
@@ -83,25 +112,21 @@ onMounted(() => {
   }
 
   function resetPosition() {
-    torso.position.set(startPosition, torsoHeight / 2 + 42, 0);
-    head.position.set(startPosition, groundLevel + torsoHeight + 20, 0);
-    armLPivot.position.set(
-      startPosition,
-      torsoHeight - torsoHeight / 7,
-      0
-    );
-    armRPivot.position.set(
-      startPosition,
-      torsoHeight - torsoHeight / 7,
-      0
-    );
+    torso.position.set(startPosition, torsoHeight, 0);
+    head.position.set(startPosition, torsoHeight + 20, 0);
+    armL.position.set(startPosition, torsoHeight - torsoHeight / 7, 0);
+    armR.position.set(startPosition, torsoHeight - torsoHeight / 7, 0);
+    legLTop.position.set(startPosition, torsoHeight / 2, 0);
+    legRTop.position.set(startPosition, torsoHeight / 2, 0);
+    legLBot.position.set(0, -legLength, 0);
+    legRBot.position.set(0, -legLength, 0);
   }
 
   function render() {
     time += 0.0125;
 
     // torso
-    if(torso.position.x - 30 > width) {
+    if (torso.position.x - 30 > width) {
       resetPosition();
     }
     torso.position.set(torso.position.x + walkSpeed, torso.position.y, 0);
@@ -110,10 +135,25 @@ onMounted(() => {
     head.position.set(head.position.x + walkSpeed, head.position.y, 0);
 
     // arms
-    armLPivot.rotation.z = Math.sin(time * walkSpeed * 4.5) * Math.PI / 4;
-    armRPivot.rotation.z = -Math.sin(time * walkSpeed * 4.5) * Math.PI / 4;
-    armLPivot.position.x += walkSpeed;
-    armRPivot.position.x += walkSpeed;
+    armL.rotation.z = (Math.sin(time * walkSpeed * 8) * Math.PI) / 8;
+    armR.rotation.z = (-Math.sin(time * walkSpeed * 8) * Math.PI) / 8;
+    armL.position.x += walkSpeed;
+    armR.position.x += walkSpeed;
+
+    // legs
+    const walk = time * walkSpeed * 8;
+    const swingL = Math.sin(walk);
+    const swingR = -Math.sin(walk);
+    const backSwingFactor = 0.2; // 0.0 = no backswing, 1.0 = full
+    legLTop.rotation.z =
+      swingL > 0 ? 0.3 * swingL : 0.3 * swingL * backSwingFactor;
+    legRTop.rotation.z =
+      swingR > 0 ? 0.3 * swingR : 0.3 * swingR * backSwingFactor;
+    legLBot.rotation.z = -0.3 * Math.max(0, swingL); // only bend forward
+    legRBot.rotation.z = -0.3 * Math.max(0, swingR); // only bend forward
+
+    legLTop.position.x += walkSpeed;
+    legRTop.position.x += walkSpeed;
 
     // resize
     if (resizeRendererToDisplaySize(renderer)) {
