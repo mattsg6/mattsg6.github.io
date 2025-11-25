@@ -46,20 +46,23 @@ onMounted(() => {
   head.position.set(startPosition, groundLevel + torsoHeight + 20, 0);
   scene.add(head);
   // arms
+  const armLength = torsoHeight / 4;
+  const armGeo = new THREE.CylinderGeometry(1, 1, armLength);
+  armGeo.translate(0, -armLength / 2, 0);
   const armLPivot = new THREE.Object3D();
-  armLPivot.position.set(startPosition - 13.5, torsoHeight - (torsoHeight/5), 0);
+  armLPivot.position.set(startPosition, torsoHeight - (torsoHeight/7), 0);
   scene.add(armLPivot);
   const armLMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(1, 1, torsoHeight / 4),
+    armGeo,
     material
   );
   armLPivot.add(armLMesh);
   armLPivot.rotation.z = -Math.PI / 4;
   const armRPivot = new THREE.Object3D();
-  armRPivot.position.set(startPosition + 13.5, torsoHeight - (torsoHeight/5), 0);
+  armRPivot.position.set(startPosition, torsoHeight - (torsoHeight/7), 0);
   scene.add(armRPivot);
   const armRMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(1, 1, torsoHeight / 4),
+    armGeo,
     material
   );
   armRPivot.add(armRMesh);
@@ -83,13 +86,13 @@ onMounted(() => {
     torso.position.set(startPosition, torsoHeight / 2 + 42, 0);
     head.position.set(startPosition, groundLevel + torsoHeight + 20, 0);
     armLPivot.position.set(
-      startPosition - 13.5,
-      torsoHeight - torsoHeight / 5,
+      startPosition,
+      torsoHeight - torsoHeight / 7,
       0
     );
     armRPivot.position.set(
-      startPosition + 13.5,
-      torsoHeight - torsoHeight / 5,
+      startPosition,
+      torsoHeight - torsoHeight / 7,
       0
     );
   }
@@ -107,9 +110,8 @@ onMounted(() => {
     head.position.set(head.position.x + walkSpeed, head.position.y, 0);
 
     // arms
-    // const swingAngle = (Math.sin(time) * Math.PI) / 2;
-    // armLPivot.rotation.z = Math.PI / 4 + swingAngle;
-    // armRPivot.rotation.z = -Math.PI / 4 - swingAngle;
+    armLPivot.rotation.z = Math.sin(time * walkSpeed * 4.5) * Math.PI / 4;
+    armRPivot.rotation.z = -Math.sin(time * walkSpeed * 4.5) * Math.PI / 4;
     armLPivot.position.x += walkSpeed;
     armRPivot.position.x += walkSpeed;
 
