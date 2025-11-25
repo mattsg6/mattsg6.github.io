@@ -3,11 +3,16 @@
 </template>
 <script setup>
 import * as THREE from "three";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 
 onMounted(() => {
   const canvas = document.querySelector("#c");
   const renderer = new THREE.WebGLRenderer({ canvas });
+  const pixelRatio = window.devicePixelRatio;
   renderer.setClearColor(0xffffff, 1);
+  renderer.setPixelRatio(pixelRatio);
 
   let width = canvas.clientWidth;
   let height = canvas.clientHeight;
@@ -31,23 +36,22 @@ onMounted(() => {
   const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
   // Sun
-  const sunGeometry = new THREE.TorusGeometry(60, 0.5, 16, 100); // radius, thickness
+  const sunGeometry = new THREE.TorusGeometry(60, 1, 16, 100); // radius, thickness
   const sun = new THREE.Mesh(sunGeometry, material);
   sun.position.set(200, height - 150, 0);
   scene.add(sun);
 
   // Man
   // Torso
-  const torsoPoints = [];
-  torsoPoints.push(new THREE.Vector3(startPosition, groundLevel + 75, 0));
-  torsoPoints.push(
+  const torsoPoints = [
+    new THREE.Vector3(startPosition, groundLevel + 75, 0),
     new THREE.Vector3(startPosition, groundLevel + torsoHeight, 0)
-  );
+  ];
   const torsoGeometry = new THREE.BufferGeometry().setFromPoints(torsoPoints);
   const torsoLine = new THREE.Line(torsoGeometry, material);
   scene.add(torsoLine);
   // head
-  const headGeometry = new THREE.TorusGeometry(20, 0.5, 16, 100);
+  const headGeometry = new THREE.TorusGeometry(20, 1, 16, 100);
   const head = new THREE.Mesh(headGeometry, material);
   head.position.set(startPosition, groundLevel + torsoHeight + 20, 0);
   scene.add(head);
@@ -77,13 +81,13 @@ onMounted(() => {
 
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
-    const nWidth = canvas.clientWidth;
-    const nHeight = canvas.clientHeight;
-    const needResize = nWidth !== canvas.width || nHeight !== canvas.height;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize =
+      canvas.width !== width * window.devicePixelRatio ||
+      canvas.height !== height * window.devicePixelRatio;
     if (needResize) {
-      renderer.setSize(nWidth, nHeight, false);
-      width = nWidth;
-      height = nHeight;
+      renderer.setSize(width, height, false);
     }
     return needResize;
   }
@@ -92,11 +96,7 @@ onMounted(() => {
     const tPositions = torsoLine.geometry.attributes.position;
     tPositions.setX(0, startPosition);
     tPositions.setX(1, startPosition);
-    head.position.set(
-      startPosition,
-      groundLevel + torsoHeight + 20,
-      0
-    );
+    head.position.set(startPosition, groundLevel + torsoHeight + 20, 0);
     const aPositions = armLine.geometry.attributes.position;
     aPositions.setX(1, startPosition);
   }
@@ -104,7 +104,7 @@ onMounted(() => {
   function render() {
     // torso
     const tPositions = torsoLine.geometry.attributes.position;
-    if(tPositions.getX(0) - 30 > width) {
+    if (tPositions.getX(0) - 30 > width) {
       resetPosition();
     }
     tPositions.setX(0, tPositions.getX(0) + walkSpeed);
@@ -130,14 +130,16 @@ onMounted(() => {
     // resize
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
-      const w = canvas.width;
-      const h = canvas.height;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
 
       camera.left = 0;
       camera.right = w;
       camera.top = h;
       camera.bottom = 0;
       camera.updateProjectionMatrix();
+
+      lineMaterial.resolution.set(w, h);
     }
 
     renderer.render(scene, camera);
