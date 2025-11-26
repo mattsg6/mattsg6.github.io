@@ -36,7 +36,6 @@ onMounted(() => {
   };
   const sunGeometry = new THREE.TorusGeometry(sunPosition.radius, 1, 16, 100); // radius, thickness
   const sun = new THREE.Mesh(sunGeometry, material);
-
   sun.position.set(sunPosition.x, sunPosition.y, 0);
   scene.add(sun);
   // Sun rays
@@ -117,6 +116,45 @@ onMounted(() => {
   br1.rotation.z = -Math.PI / 2;
   const br2 = limbFactory(1, 30, width * 0.65, height * 0.85, 0);
   br2.rotation.z = Math.PI / 2;
+
+  // clouds
+  function cloudy(x, y, xRad, yRad, arcLength, rotation) {
+    const curve = new THREE.EllipseCurve(
+      x,
+      y,
+      xRad,
+      yRad,
+      0,
+      arcLength,
+      false,
+      rotation
+    );
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const ellipse = new THREE.Line(
+      geometry,
+      new THREE.MeshBasicMaterial({ color: 0x000000 })
+    );
+    scene.add(ellipse);
+    return ellipse;
+  }
+  const clouds = [
+    cloudy(width * 0.4, height * 0.65, 50, 100, (Math.PI * 2) / 3, Math.PI / 2),
+    cloudy(
+      width * 0.4,
+      height * 0.65,
+      50,
+      100,
+      (Math.PI * 2) / 3,
+      -Math.PI / 2
+    ),
+    cloudy(width * 0.4, height * 0.65, 50, 50, Math.PI / 2, Math.PI),
+    cloudy(width * 0.4 - 20, height * 0.65, 50, 50, Math.PI / 2, Math.PI),
+    cloudy(width * 0.4 - 40, height * 0.65, 50, 50, Math.PI / 2, Math.PI),
+    cloudy(width * 0.4, height * 0.65, 50, 50, Math.PI/4, Math.PI /4),
+    cloudy(width * 0.4 + 20, height * 0.65, 50, 50, Math.PI/4, Math.PI /4),
+    cloudy(width * 0.4 + 40, height * 0.65, 50, 50, Math.PI/4, Math.PI /4),
+  ];
 
   // Man
   // Torso
@@ -236,12 +274,17 @@ onMounted(() => {
     rays.eight.scale.y = Math.max(0.5, scale2);
 
     // bird
-    let flapAmplitude = 0.6;
-    let flapSpeed = 4;
+    let flapAmplitude = 0.6 / pixelRatio;
+    let flapSpeed = 4 / pixelRatio;
     bl1.rotation.z = -Math.PI / 2 + Math.sin(time * flapSpeed) * flapAmplitude;
     bl2.rotation.z = Math.PI / 2 - Math.sin(time * flapSpeed) * flapAmplitude;
-    br1.rotation.z = -Math.PI / 2 + Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
-    br2.rotation.z = Math.PI / 2 - Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
+    br1.rotation.z =
+      -Math.PI / 2 + Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
+    br2.rotation.z =
+      Math.PI / 2 - Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
+
+    // clouds
+    clouds.forEach(c => c.position.x += walkSpeed * 3)
 
     // resize
     if (resizeRendererToDisplaySize(renderer)) {
