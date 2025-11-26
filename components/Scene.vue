@@ -138,23 +138,38 @@ onMounted(() => {
     scene.add(ellipse);
     return ellipse;
   }
-  const clouds = [
-    cloudy(width * 0.4, height * 0.65, 50, 100, (Math.PI * 2) / 3, Math.PI / 2),
-    cloudy(
-      width * 0.4,
-      height * 0.65,
-      50,
-      100,
-      (Math.PI * 2) / 3,
-      -Math.PI / 2
-    ),
-    cloudy(width * 0.4, height * 0.65, 50, 50, Math.PI / 2, Math.PI),
-    cloudy(width * 0.4 - 20, height * 0.65, 50, 50, Math.PI / 2, Math.PI),
-    cloudy(width * 0.4 - 40, height * 0.65, 50, 50, Math.PI / 2, Math.PI),
-    cloudy(width * 0.4, height * 0.65, 50, 50, Math.PI/4, Math.PI /4),
-    cloudy(width * 0.4 + 20, height * 0.65, 50, 50, Math.PI/4, Math.PI /4),
-    cloudy(width * 0.4 + 40, height * 0.65, 50, 50, Math.PI/4, Math.PI /4),
-  ];
+  function makeCloud(x, y, xRad, yRad) {
+    return [
+      cloudy(x, y, xRad, yRad, (Math.PI * 2) / 3, Math.PI / 2),
+      cloudy(x, y, xRad, yRad, (Math.PI * 2) / 3, -Math.PI / 2),
+      cloudy(x, y, xRad, xRad, Math.PI / 2, Math.PI),
+      cloudy(x - yRad / 5, y, xRad, xRad, Math.PI / 2, Math.PI),
+      cloudy(x - yRad * 0.4, y, xRad, xRad, Math.PI / 2, Math.PI),
+      cloudy(x, y, xRad, xRad, Math.PI / 4, Math.PI / 4),
+      cloudy(x + yRad / 5, y, xRad, xRad, Math.PI / 4, Math.PI / 4),
+      cloudy(x + yRad * 0.4, y, xRad, xRad, Math.PI / 4, Math.PI / 4),
+    ];
+  }
+  const cloudStart = {
+    one: -width * 0.45,
+    two: -width * 0.4,
+    three: -width * 0.55,
+    four: -65,
+    five: -60,
+    six: -150,
+    seven: -width + 200,
+    eight: -width + 100,
+    nine: -width + 150,
+  };
+  const cloud1 = makeCloud(cloudStart.one, height * 0.65, 50, 200);
+  const cloud2 = makeCloud(cloudStart.two, height * 0.8, 30, 75);
+  const cloud3 = makeCloud(cloudStart.three, height * 0.77, 20, 50);
+  const cloud4 = makeCloud(cloudStart.four, height * 0.9, 20, 40);
+  const cloud5 = makeCloud(cloudStart.five, height * 0.71, 30, 45);
+  const cloud6 = makeCloud(cloudStart.six, height * 0.55, 25, 30);
+  const cloud7 = makeCloud(cloudStart.seven, height * 0.6, 30, 100);
+  const cloud8 = makeCloud(cloudStart.eight, height * 0.67, 10, 50);
+  const cloud9 = makeCloud(cloudStart.nine, height * 0.51, 40, 45);
 
   // Man
   // Torso
@@ -228,6 +243,25 @@ onMounted(() => {
     legRBot.position.set(0, -legLength, 0);
   }
 
+  function moveCloud(cloud, seed, start) {
+    cloud.forEach((c, i) => {
+      if (i % 2 === 0) {
+        c.position.y += Math.sin(time) * seed * 0.05;
+        // c.position.x += Math.sin(time) * Math.random() * 0.05;
+        c.rotation.z = Math.sin(time) * 0.005;
+      } else {
+        c.position.y -= Math.sin(time) * seed * 0.05;
+        // c.position.x -= Math.sin(time) * Math.random() * 0.05;
+        c.rotation.z = Math.sin(time) * 0.005;
+      }
+      if (c.position.x + start * 1.65 > width) {
+        c.position.x = start;
+      } else {
+        c.position.x += walkSpeed * 1.5;
+      }
+    });
+  }
+
   function render() {
     time += 0.0125;
 
@@ -284,7 +318,15 @@ onMounted(() => {
       Math.PI / 2 - Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
 
     // clouds
-    clouds.forEach(c => c.position.x += walkSpeed * 3)
+    moveCloud(cloud1, Math.random(), cloudStart.one);
+    moveCloud(cloud2, Math.random(), cloudStart.two);
+    moveCloud(cloud3, Math.random(), cloudStart.three);
+    moveCloud(cloud4, Math.random(), cloudStart.four);
+    moveCloud(cloud5, Math.random(), cloudStart.five);
+    moveCloud(cloud6, Math.random(), cloudStart.six);
+    moveCloud(cloud7, Math.random(), cloudStart.seven);
+    moveCloud(cloud8, Math.random(), cloudStart.eight);
+    moveCloud(cloud9, Math.random(), cloudStart.nine);
 
     // resize
     if (resizeRendererToDisplaySize(renderer)) {
