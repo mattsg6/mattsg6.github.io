@@ -31,24 +31,92 @@ onMounted(() => {
   const sunPosition = {
     x: 200,
     y: height - 150,
-    radius: 60
-  }
+    radius: 60,
+    c: 50,
+  };
   const sunGeometry = new THREE.TorusGeometry(sunPosition.radius, 1, 16, 100); // radius, thickness
   const sun = new THREE.Mesh(sunGeometry, material);
-  
+
   sun.position.set(sunPosition.x, sunPosition.y, 0);
   scene.add(sun);
   // Sun rays
-  const sunRayDist = 6;
+  const sunRayDist = 10;
   const sunRayLength = 50;
   const rays = {
-    one: limbFactory(1, sunRayLength,sunPosition.x, sunPosition.y + sunPosition.radius + sunRayDist, 0),
-    two: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
-    three: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
-    four: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
-    five: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
-    six: limbFactory(1, sunRayLength, sunPosition.x, sunPosition.y + startPosition.radius + sunRayDist, 0),
-  }
+    one: limbFactory(
+      1,
+      sunRayLength,
+      sunPosition.x,
+      sunPosition.y + sunPosition.radius + sunRayDist,
+      0
+    ),
+    two: limbFactory(
+      1,
+      sunRayLength,
+      sunPosition.x,
+      sunPosition.y - sunPosition.radius - sunRayDist,
+      0
+    ),
+    three: limbFactory(
+      1,
+      sunRayLength,
+      sunPosition.x + sunPosition.radius + sunRayDist,
+      sunPosition.y,
+      0
+    ),
+    four: limbFactory(
+      1,
+      sunRayLength,
+      sunPosition.x - sunPosition.radius - sunRayDist,
+      sunPosition.y,
+      0
+    ),
+    five: limbFactory(
+      1,
+      sunRayLength / 2,
+      sunPosition.x + sunPosition.c,
+      sunPosition.y + sunPosition.c,
+      0
+    ),
+    six: limbFactory(
+      1,
+      sunRayLength / 2,
+      sunPosition.x + sunPosition.c,
+      sunPosition.y - sunPosition.c,
+      0
+    ),
+    seven: limbFactory(
+      1,
+      sunRayLength / 2,
+      sunPosition.x - sunPosition.c,
+      sunPosition.y - sunPosition.c,
+      0
+    ),
+    eight: limbFactory(
+      1,
+      sunRayLength / 2,
+      sunPosition.x - sunPosition.c,
+      sunPosition.y + sunPosition.c,
+      0
+    ),
+  };
+  rays.one.rotation.z = Math.PI;
+  rays.three.rotation.z = Math.PI / 2;
+  rays.four.rotation.z = -Math.PI / 2;
+  rays.five.rotation.z = (Math.PI * 3) / 4;
+  rays.six.rotation.z = Math.PI / 4;
+  rays.seven.rotation.z = -Math.PI / 4;
+  rays.eight.rotation.z = (-Math.PI * 3) / 4;
+
+  // birds
+  const bl1 = limbFactory(1, 50, width * 0.75, height * 0.75, 0);
+  bl1.rotation.z = -Math.PI / 2;
+  const bl2 = limbFactory(1, 50, width * 0.75, height * 0.75, 0);
+  bl2.rotation.z = Math.PI / 2;
+  const br1 = limbFactory(1, 30, width * 0.65, height * 0.85, 0);
+  br1.rotation.z = -Math.PI / 2;
+  const br2 = limbFactory(1, 30, width * 0.65, height * 0.85, 0);
+  br2.rotation.z = Math.PI / 2;
 
   // Man
   // Torso
@@ -154,6 +222,26 @@ onMounted(() => {
 
     legLTop.position.x += walkSpeed;
     legRTop.position.x += walkSpeed;
+
+    // sun
+    const scale1 = Math.sin(time);
+    const scale2 = Math.cos(time) * 2;
+    rays.one.scale.y = Math.max(0.5, scale1);
+    rays.two.scale.y = Math.max(0.5, scale1);
+    rays.three.scale.y = Math.max(0.5, scale1);
+    rays.four.scale.y = Math.max(0.5, scale1);
+    rays.five.scale.y = Math.max(0.5, scale2);
+    rays.six.scale.y = Math.max(0.5, scale2);
+    rays.seven.scale.y = Math.max(0.5, scale2);
+    rays.eight.scale.y = Math.max(0.5, scale2);
+
+    // bird
+    let flapAmplitude = 0.6;
+    let flapSpeed = 4;
+    bl1.rotation.z = -Math.PI / 2 + Math.sin(time * flapSpeed) * flapAmplitude;
+    bl2.rotation.z = Math.PI / 2 - Math.sin(time * flapSpeed) * flapAmplitude;
+    br1.rotation.z = -Math.PI / 2 + Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
+    br2.rotation.z = Math.PI / 2 - Math.sin(time * flapSpeed * 1.5) * flapAmplitude;
 
     // resize
     if (resizeRendererToDisplaySize(renderer)) {
