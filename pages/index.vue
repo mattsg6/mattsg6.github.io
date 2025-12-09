@@ -12,7 +12,7 @@
             <scene></scene>
         </v-row>
         <v-row v-else class="flex-grow-1 ma-0 pa-0 d-flex justify-center align-center" style="height:100%">
-            <span class="text-caption px-4"><strong style="font-size: 50;">&#x2191</strong> Those are links. Try pressing one.<br></br>(To view live footage of me, hop on a desktop)</span>
+            <span class="text-caption px-4"><strong style="font-size: 50;">&#x2191</strong> Those are links. Try pressing one.<br></br>(To view live footage of me, use a bigger screen.)</span>
         </v-row>
     </v-container>
 </template>
