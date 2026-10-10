@@ -4,19 +4,21 @@
             <span class="text-h3" style="text-align: center;">Matthew Gilmore</span>
         </v-row>
         <v-row class="w-100 d-flex justify-center ga-6 flex-wrap ma-0">
-            <template v-for="item in menu">
-                <a target="_blank" :href="item.src">{{ item.name }}</a>
-            </template>
+            <a v-for="item of menu" target="_blank" :href="item.src">{{ item.name }}</a>
         </v-row>
         <v-row v-if="$device.isDesktop" class="pa-0 ma-0 w-100 flex-grow-1" style="min-height: 0; height: 100%;">
             <scene></scene>
         </v-row>
         <v-row v-else class="flex-grow-1 ma-0 pa-0 d-flex justify-center align-center" style="height:100%">
-            <span class="text-caption px-4"><strong style="font-size: 50;">&#x2191</strong> Those are links. Try pressing one.<br></br>(To view live footage of me, use a bigger screen.)</span>
+            <span class="text-caption px-4"><strong style="font-size: 50;">&#x2191</strong> Those are links. Try
+                pressing one.<br></br>(To view live footage of me, use a bigger screen.)</span>
         </v-row>
     </v-container>
 </template>
 <script setup>
+definePageMeta({
+    layout: 'landing'
+});
 const menu = [
     {
         name: "resume",
@@ -27,17 +29,8 @@ const menu = [
         src: "https://github.com/mattsg6"
     },
     {
-        name: "photography",
-        src: "https://mattsg6.github.io/mgphotography"
+        name: "blog",
+        src: "https://blog.matthew-gilmore.com"
     }
 ]
 </script>
-<style scoped>
-a {
-    text-decoration: none;
-    color: black;
-}
-a:hover {
-    text-decoration: underline;
-}
-</style>
