@@ -30,7 +30,7 @@ const menu = [
     },
     {
         name: "blog",
-        src: `${window.location.origin}/blog`
+        src: "https://blog.matthew-gilmore.com"
     }
 ]
 </script>
